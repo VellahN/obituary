@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obituary Submission Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Submit an Obituary</h2>
+        <form id="obituary-form" method="POST" action="{{ url('submit-obituary') }}">
+            @csrf
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of Birth:</label>
+                <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="date_of_death">Date of Death:</label>
+                <input type="date" id="date_of_death" name="date_of_death" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="content">Obituary Content:</label>
+                <textarea id="content" name="content" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="author">Author:</label>
+                <input type="text" id="author" name="author" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit Obituary</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#obituary-form').submit(function(event) {
+                event.preventDefault();
+                var name = $('#name').val();
+                var dateOfBirth = $('#date_of_birth').val();
+                var dateOfDeath = $('#date_of_death').val();
+                var content = $('#content').val();
+                var author = $('#author').val();
+
+                if (name === '' || dateOfBirth === '' || dateOfDeath === '' || content === '' || author === '') {
+                    alert('Please fill in all fields');
+                    return false;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url('submit-obituary') }}',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        'name': name,
+                        'date_of_birth': dateOfBirth,
+                        'date_of_death': dateOfDeath,
+                        'content': content,
+                        'author': author
+                    },
+                    success: function(data) {
+                        alert('Obituary submitted successfully');
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error submitting obituary: ' + error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
